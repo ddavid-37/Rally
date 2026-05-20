@@ -1,26 +1,18 @@
 <!DOCTYPE html>
 <html lang="fr">
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Suivi moto - Rallye Teams Asphalte 37</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Courier New', monospace; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; }
-
-    #header {
-      background: linear-gradient(135deg, #1a1a1a 0%, #2d1a00 50%, #1a1a1a 100%);
-      border-bottom: 3px solid #ff6b00;
-      padding: 16px 24px;
-      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-    }
+    #header { background: linear-gradient(135deg, #1a1a1a 0%, #2d1a00 50%, #1a1a1a 100%); border-bottom: 3px solid #ff6b00; padding: 16px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     #header h1 { font-size: 20px; font-weight: 900; letter-spacing: 2px; color: #ff6b00; text-transform: uppercase; line-height: 1.3; }
     #header p { font-size: 11px; color: #888; letter-spacing: 2px; margin-top: 4px; }
     #header-btns { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
-
     .btn { border: none; padding: 10px 16px; font-family: 'Courier New', monospace; font-weight: 700; font-size: 11px; letter-spacing: 1px; cursor: pointer; text-transform: uppercase; white-space: nowrap; }
     .btn-orange { background: #ff6b00; color: #000; }
     .btn-green  { background: #00cc66; color: #000; }
@@ -28,20 +20,15 @@
     .btn-purple { background: #aa44ff; color: #fff; }
     .btn-small  { padding: 7px 12px; }
     .btn-ghost  { background: transparent; color: #666; border: 1px solid #333; }
-
     .form-bar { background: #111; border-bottom: 1px solid #222; padding: 12px 24px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
     .form-bar label { font-size: 12px; font-weight: 700; margin-right: 4px; }
-    .form-bar input, .form-bar select { background: #1a1a1a; color: #e0e0e0; padding: 7px 12px; font-family: 'Courier New', monospace; font-size: 12px; outline: none; }
+    .form-bar input { background: #1a1a1a; color: #e0e0e0; padding: 7px 12px; font-family: 'Courier New', monospace; font-size: 12px; outline: none; }
     .input-orange { border: 1px solid #ff6b00; width: 200px; }
     .input-green  { border: 1px solid #00cc66; width: 200px; }
     .input-gray   { border: 1px solid #444; width: 160px; }
     .input-sm     { width: 100px !important; }
-
-    /* Panel générique */
     .panel { background: #0d0d0d; border-bottom: 1px solid #333; padding: 16px 24px; display: none; }
     .panel h3 { font-size: 12px; letter-spacing: 2px; margin-bottom: 14px; }
-
-    /* CP Manager */
     #cp-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
     .cp-tag { display: flex; align-items: center; gap: 6px; background: #1a1a1a; border: 1px solid #333; padding: 6px 10px; border-radius: 4px; }
     .cp-tag input { background: transparent; border: none; border-bottom: 1px solid #555; color: #e0e0e0; font-family: 'Courier New', monospace; font-size: 12px; outline: none; width: 130px; padding: 2px 4px; }
@@ -50,23 +37,17 @@
     .cp-del:hover { color: #ff4444; }
     #cp-add-row { display: flex; gap: 8px; align-items: center; }
     #cp-add-row input { background: #1a1a1a; border: 1px solid #0088ff; color: #e0e0e0; padding: 7px 12px; font-family: 'Courier New', monospace; font-size: 12px; outline: none; width: 220px; }
-
-    /* Fil rouge manager */
     #fr-settings { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
     #fr-settings label { font-size: 11px; color: #888; }
     #fr-settings input { background: #1a1a1a; color: #e0e0e0; padding: 6px 10px; font-family: 'Courier New', monospace; font-size: 12px; outline: none; }
     .input-fr { border: 1px solid #aa44ff; width: 220px; }
     .input-fr-num { border: 1px solid #aa44ff; width: 90px; }
     .fr-note { font-size: 10px; color: #666; margin-top: 8px; }
-
-    /* Game order */
     #game-order-list { display: flex; flex-wrap: wrap; gap: 8px; }
-    .game-order-tag { display: flex; align-items: center; gap: 8px; background: #1a1a1a; border: 1px solid #336633; padding: 8px 12px; border-radius: 4px; cursor: default; }
+    .game-order-tag { display: flex; align-items: center; gap: 8px; background: #1a1a1a; border: 1px solid #336633; padding: 8px 12px; border-radius: 4px; }
     .game-order-tag span { font-size: 12px; color: #00cc66; }
     .go-btn { background: transparent; border: 1px solid #333; color: #888; cursor: pointer; font-size: 12px; padding: 2px 7px; }
     .go-btn:hover { color: #fff; border-color: #666; }
-
-    /* Table */
     #table-wrap { padding: 20px 12px; overflow-x: auto; }
     table { border-collapse: collapse; min-width: 600px; }
     th { padding: 10px 7px; font-size: 10px; letter-spacing: 1px; color: #aaa; font-weight: 700; border-bottom: 2px solid #333; white-space: nowrap; position: relative; background: #1a1a1a; }
@@ -78,31 +59,23 @@
     th.th-del   { background: #1a1a1a; min-width: 30px; }
     th.th-name  { background: #1a1a1a; min-width: 170px; text-align: left; }
     th.th-num   { background: #1a1a1a; min-width: 50px; text-align: center; }
-
     td { padding: 9px 7px; vertical-align: middle; }
     tr.row-even { background: #0f0f0f; }
     tr.row-odd  { background: #111; }
     tr { border-bottom: 1px solid #1e1e1e; }
-
     .cp-btn { width: 34px; height: 34px; border-radius: 6px; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; margin: 0 auto; border: none; }
     .cp-on  { border: 2px solid #00cc55 !important; background: rgba(0,200,80,0.18); }
     .cp-off { border: 2px solid #cc2200 !important; background: rgba(200,30,0,0.12); }
-
     .score-input { width: 60px; padding: 5px 3px; font-family: 'Courier New', monospace; font-size: 14px; font-weight: 700; text-align: center; outline: none; border-radius: 4px; color: #00ff88; }
     .score-empty  { background: #1a1a1a; border: 1px solid #333; }
     .score-filled { background: rgba(0,180,70,0.12); border: 1px solid #00aa44; }
-
     .fr-input { width: 70px; padding: 5px 3px; font-family: 'Courier New', monospace; font-size: 14px; font-weight: 700; text-align: center; outline: none; border-radius: 4px; color: #cc88ff; background: #1a0030; border: 1px solid #550088; }
     .fr-diff { font-size: 10px; margin-top: 3px; text-align: center; }
-
     .prog-bar-bg { width: 64px; height: 5px; background: #222; border-radius: 3px; margin: 4px auto 0; overflow: hidden; }
     .prog-bar-fg { height: 100%; border-radius: 3px; transition: width 0.3s; }
-
     .del-game-btn { position: absolute; top: 4px; right: 4px; background: rgba(200,0,0,0.2); border: 1px solid #550000; color: #ff4444; cursor: pointer; font-size: 10px; padding: 1px 4px; line-height: 1; border-radius: 2px; }
     .del-rider-btn { background: transparent; border: none; color: #333; cursor: pointer; font-size: 14px; }
-
     #legend { padding: 0 24px 12px; display: flex; gap: 20px; flex-wrap: wrap; font-size: 11px; color: #555; }
-
     #ranking { padding: 12px 24px 32px; }
     #ranking h2 { color: #ff6b00; font-weight: 900; letter-spacing: 3px; font-size: 13px; margin-bottom: 12px; }
     #ranking-list { display: flex; flex-direction: column; gap: 6px; max-width: 520px; }
@@ -113,16 +86,16 @@
     .rank-row .rbike { font-size: 10px; color: #555; }
     .rank-row .rscore { font-size: 18px; font-weight: 900; color: #00ff88; min-width: 70px; text-align: right; }
     .rank-row.leader .rscore { color: #ffd700; }
+    #sync-status { position: fixed; bottom: 12px; right: 16px; font-size: 10px; padding: 4px 10px; border-radius: 20px; background: #111; border: 1px solid #333; color: #555; }
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div id="header">
   <div style="font-size:36px">🏍️</div>
   <div>
     <h1>Suivi moto<br>Rallye Teams Asphalte 37</h1>
-    <p id="subtitle">0 MOTARDS • 0 POINTS DE PASSAGE • 0 JEUX</p>
+    <p id="subtitle">Chargement...</p>
   </div>
   <div id="header-btns">
     <button class="btn btn-orange" onclick="togglePanel('form-rider')">+ MOTARD</button>
@@ -132,7 +105,6 @@
   </div>
 </div>
 
-<!-- FORM: ADD RIDER -->
 <div class="form-bar" id="form-rider" style="display:none">
   <label style="color:#ff6b00">NOUVEAU MOTARD</label>
   <input class="input-orange" id="in-rider-name" placeholder="Nom du motard" onkeydown="if(event.key==='Enter') addRider()" />
@@ -141,7 +113,6 @@
   <button class="btn btn-ghost  btn-small" onclick="togglePanel('form-rider')">ANNULER</button>
 </div>
 
-<!-- FORM: ADD GAME -->
 <div class="form-bar" id="form-game" style="display:none">
   <label style="color:#00cc66">NOUVEAU JEU</label>
   <input class="input-green" id="in-game-name" placeholder="Nom du jeu (ex: 🏹 Adresse)" onkeydown="if(event.key==='Enter') addGame()" />
@@ -150,7 +121,6 @@
   <button class="btn btn-ghost btn-small" onclick="togglePanel('form-game')">ANNULER</button>
 </div>
 
-<!-- PANEL: CHECKPOINTS -->
 <div class="panel" id="panel-cp">
   <h3 style="color:#0088ff">⚙ GESTION DES POINTS DE PASSAGE</h3>
   <div id="cp-list"></div>
@@ -160,7 +130,6 @@
   </div>
 </div>
 
-<!-- PANEL: FIL ROUGE -->
 <div class="panel" id="panel-fr">
   <h3 style="color:#aa44ff">🧵 PARAMÈTRES DU FIL ROUGE</h3>
   <div id="fr-settings">
@@ -177,17 +146,13 @@
       <input class="input-fr-num" id="fr-points" type="number" min="0" value="50" onchange="updateFrSettings()" placeholder="pts" />
     </div>
   </div>
-  <p class="fr-note">
-    💡 Le motard dont l'estimation est la plus proche de la réponse exacte remporte les points. En cas d'égalité de distance, les deux partagent les points (arrondi au supérieur).
-    Le score fil rouge est calculé automatiquement dès que la réponse de référence est renseignée.
-  </p>
+  <p class="fr-note">💡 Le motard dont l'estimation est la plus proche remporte les points. En cas d'égalité, les points sont partagés.</p>
   <div style="margin-top:14px">
-    <h3 style="color:#aa44ff;font-size:11px;margin-bottom:8px">↕ ORDRE DES JEUX (glisser ou utiliser les flèches)</h3>
+    <h3 style="color:#aa44ff;font-size:11px;margin-bottom:8px">↕ ORDRE DES JEUX</h3>
     <div id="game-order-list"></div>
   </div>
 </div>
 
-<!-- TABLE -->
 <div id="table-wrap">
   <table id="main-table">
     <thead id="thead-row"><tr></tr></thead>
@@ -195,7 +160,6 @@
   </table>
 </div>
 
-<!-- LEGEND -->
 <div id="legend">
   <span>✅ CP validé (valide aussi tous les précédents)</span>
   <span>🔴 Non passé</span>
@@ -203,47 +167,123 @@
   <span style="color:#aa44ff">🧵 Fil rouge : estimation la plus proche gagne</span>
 </div>
 
-<!-- RANKING -->
 <div id="ranking">
   <h2>🏆 CLASSEMENT GÉNÉRAL</h2>
   <div id="ranking-list"></div>
 </div>
 
+<div id="sync-status">⏳ Connexion...</div>
+
 <script>
-// ─── État ────────────────────────────────────────────────
-let checkpoints = ["Départ", "Pont du Gard", "Col de Vence", "Gorges du Verdon", "Arrivée"];
+// ─── État local ───────────────────────────────────────────
+let checkpoints = ["Départ", "Arrivée"];
+let filRouge = { label: "Panneaux", answer: "", points: 50 };
+let games = [];
+let riders = [];
+let nextGameId = 1;
+let nextRiderId = 1;
 
-let filRouge = {
-  label: "Panneaux",
-  answer: "",   // réponse de référence (string vide = pas encore fixée)
-  points: 50,
+// ─── Firebase ─────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyAPtwWPnEPe-45NJ9FOtd4RUEaMYdEYOtQ",
+  authDomain: "rallye-moto-app.firebaseapp.com",
+  databaseURL: "https://rallye-moto-app-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "rallye-moto-app",
+  storageBucket: "rallye-moto-app.firebasestorage.app",
+  messagingSenderId: "825683822459",
+  appId: "1:825683822459:web:1004377bf66649a0ed1fde"
 };
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const dbRef = db.ref("rallye2");
 
-let games = [
-  { id: 1, name: "🎯 Précision", max: 100 },
-  { id: 2, name: "🗺️ Navigation", max: 100 },
-  { id: 3, name: "⏱️ Chrono", max: 100 },
-];
-let nextGameId = 10;
+// Sauvegarde : convertit tout en objets purs (pas de tableaux JS → Firebase les transforme)
+function sauvegarder() {
+  const data = {
+    checkpoints: Object.fromEntries(checkpoints.map((v, i) => [i, v])),
+    filRouge: { ...filRouge },
+    nextGameId,
+    nextRiderId,
+    games: Object.fromEntries(games.map(g => [g.id, { id: g.id, name: g.name, max: g.max }])),
+    riders: Object.fromEntries(riders.map(r => [r.id, {
+      id: r.id,
+      name: r.name,
+      bike: r.bike,
+      frEstimate: r.frEstimate ?? "",
+      checkpoints: Object.fromEntries(r.checkpoints.map((v, i) => [i, v])),
+      scores: { ...r.scores }
+    }]))
+  };
+  dbRef.set(data);
+  document.getElementById('sync-status').textContent = '✅ Synchronisé';
+  document.getElementById('sync-status').style.color = '#00cc66';
+}
 
-let riders = [
-  { id:1, name:"Jean Dupont",     bike:"BMW R1250GS" },
-  { id:2, name:"Marc Leblanc",    bike:"Honda Africa Twin" },
-  { id:3, name:"Sophie Martin",   bike:"Yamaha Ténéré 700" },
-  { id:4, name:"Pierre Durand",   bike:"KTM 890 Adventure" },
-  { id:5, name:"Isabelle Morel",  bike:"Triumph Tiger 900" },
-  { id:6, name:"Lucas Bernard",   bike:"Ducati Multistrada" },
-  { id:7, name:"Nathalie Petit",  bike:"Royal Enfield Himalayan" },
-  { id:8, name:"Antoine Roux",    bike:"GS 310 BMW" },
-].map(r => ({
-  ...r,
-  checkpoints: checkpoints.map(() => false),
-  scores: Object.fromEntries(games.map(g => [g.id, ""])),
-  frEstimate: "",
-}));
-let nextRiderId = 9;
+// Chargement : reconvertit les objets Firebase en tableaux JS
+function chargerDepuisFirebase(data) {
+  if (!data) return;
 
-// ─── Panels ──────────────────────────────────────────────
+  // checkpoints
+  if (data.checkpoints) {
+    const keys = Object.keys(data.checkpoints).map(Number).sort((a,b)=>a-b);
+    checkpoints = keys.map(k => data.checkpoints[k]);
+  }
+
+  // filRouge
+  if (data.filRouge) filRouge = { ...filRouge, ...data.filRouge };
+
+  // compteurs
+  if (data.nextGameId)  nextGameId  = data.nextGameId;
+  if (data.nextRiderId) nextRiderId = data.nextRiderId;
+
+  // games
+  if (data.games) {
+    games = Object.values(data.games).map(g => ({ id: g.id, name: g.name, max: g.max }));
+  }
+
+  // riders
+  if (data.riders) {
+    riders = Object.values(data.riders).map(r => {
+      // checkpoints du rider
+      let cpArr = [];
+      if (r.checkpoints) {
+        const ks = Object.keys(r.checkpoints).map(Number).sort((a,b)=>a-b);
+        cpArr = ks.map(k => r.checkpoints[k]);
+      }
+      // ajuster la longueur si besoin
+      while (cpArr.length < checkpoints.length) cpArr.push(false);
+      cpArr = cpArr.slice(0, checkpoints.length);
+
+      return {
+        id: r.id,
+        name: r.name,
+        bike: r.bike,
+        frEstimate: r.frEstimate ?? "",
+        checkpoints: cpArr,
+        scores: r.scores ? { ...r.scores } : {}
+      };
+    });
+  }
+
+  // Mettre à jour les champs fil rouge dans l'interface
+  document.getElementById('fr-label').value  = filRouge.label  ?? "";
+  document.getElementById('fr-answer').value = filRouge.answer ?? "";
+  document.getElementById('fr-points').value = filRouge.points ?? 50;
+
+  render();
+}
+
+// Écoute temps réel
+dbRef.on("value", snap => {
+  document.getElementById('sync-status').textContent = '🔄 En ligne';
+  document.getElementById('sync-status').style.color = '#0088ff';
+  chargerDepuisFirebase(snap.val());
+}, err => {
+  document.getElementById('sync-status').textContent = '❌ Hors ligne';
+  document.getElementById('sync-status').style.color = '#ff4444';
+});
+
+// ─── Panels ───────────────────────────────────────────────
 const panels = ['form-rider','form-game','panel-cp','panel-fr'];
 function togglePanel(id) {
   panels.forEach(p => {
@@ -259,27 +299,24 @@ function togglePanel(id) {
   });
 }
 
-// ─── CP Manager ──────────────────────────────────────────
+// ─── CP Manager ───────────────────────────────────────────
 function renderCpManager() {
   const list = document.getElementById('cp-list');
   list.innerHTML = '';
   checkpoints.forEach((cp, i) => {
     const tag = document.createElement('div');
     tag.className = 'cp-tag';
-    tag.innerHTML = `
-      <span class="cp-tag-num">CP${i+1}</span>
+    tag.innerHTML = `<span class="cp-tag-num">CP${i+1}</span>
       <input value="${escHtml(cp)}" onchange="renameCheckpoint(${i}, this.value)" />
       <button class="cp-del" onclick="removeCheckpoint(${i})">✕</button>`;
     list.appendChild(tag);
   });
 }
-
 function renameCheckpoint(i, name) {
   if (!name.trim()) return;
   checkpoints[i] = name.trim();
-  render();
+  sauvegarder(); render();
 }
-
 function addCheckpoint() {
   const inp = document.getElementById('in-cp-name');
   const name = inp.value.trim();
@@ -288,30 +325,26 @@ function addCheckpoint() {
   riders.forEach(r => r.checkpoints.push(false));
   inp.value = '';
   renderCpManager();
-  render();
+  sauvegarder(); render();
 }
-
 function removeCheckpoint(i) {
   if (checkpoints.length <= 1) { alert("Il faut au moins un point de passage."); return; }
   checkpoints.splice(i, 1);
   riders.forEach(r => r.checkpoints.splice(i, 1));
   renderCpManager();
-  render();
+  sauvegarder(); render();
 }
 
-// ─── Fil Rouge settings ──────────────────────────────────
+// ─── Fil Rouge ────────────────────────────────────────────
 function updateFrSettings() {
   filRouge.label  = document.getElementById('fr-label').value.trim() || "Panneaux";
   filRouge.answer = document.getElementById('fr-answer').value;
   filRouge.points = Math.max(0, parseInt(document.getElementById('fr-points').value) || 0);
-  render();
+  sauvegarder(); render();
 }
-
-// Calcule les scores fil rouge : le(s) plus proche(s) gagnent filRouge.points
 function computeFrScores() {
   if (filRouge.answer === "" || isNaN(parseInt(filRouge.answer))) return {};
   const ref = parseInt(filRouge.answer);
-  const scores = {};
   let minDiff = Infinity;
   riders.forEach(r => {
     if (r.frEstimate === "" || isNaN(parseInt(r.frEstimate))) return;
@@ -322,35 +355,34 @@ function computeFrScores() {
     if (r.frEstimate === "" || isNaN(parseInt(r.frEstimate))) return false;
     return Math.abs(parseInt(r.frEstimate) - ref) === minDiff;
   });
-  const pts = Math.ceil(filRouge.points / winners.length);
+  const pts = Math.ceil(filRouge.points / (winners.length || 1));
+  const scores = {};
   winners.forEach(r => scores[r.id] = pts);
   return scores;
 }
 
-// ─── Game order ──────────────────────────────────────────
+// ─── Ordre des jeux ───────────────────────────────────────
 function renderGameOrder() {
   const el = document.getElementById('game-order-list');
   el.innerHTML = '';
   games.forEach((g, i) => {
     const tag = document.createElement('div');
     tag.className = 'game-order-tag';
-    tag.innerHTML = `
-      <span>${escHtml(g.name)} <span style="color:#555;font-size:10px">/ ${g.max} pts</span></span>
+    tag.innerHTML = `<span>${escHtml(g.name)} <span style="color:#555;font-size:10px">/ ${g.max} pts</span></span>
       <button class="go-btn" onclick="moveGame(${i},-1)" ${i===0?'disabled style="opacity:.3"':''}>▲</button>
       <button class="go-btn" onclick="moveGame(${i}, 1)" ${i===games.length-1?'disabled style="opacity:.3"':''}>▼</button>`;
     el.appendChild(tag);
   });
 }
-
 function moveGame(i, dir) {
   const j = i + dir;
   if (j < 0 || j >= games.length) return;
   [games[i], games[j]] = [games[j], games[i]];
   renderGameOrder();
-  render();
+  sauvegarder(); render();
 }
 
-// ─── Add/Remove game ─────────────────────────────────────
+// ─── Jeux ─────────────────────────────────────────────────
 function addGame() {
   const nameEl = document.getElementById('in-game-name');
   const maxEl  = document.getElementById('in-game-max');
@@ -359,21 +391,18 @@ function addGame() {
   const max = Math.max(1, parseInt(maxEl.value) || 100);
   const id = nextGameId++;
   games.push({ id, name, max });
-  riders.forEach(r => r.scores[id] = "");
+  riders.forEach(r => { if (r.scores[id] === undefined) r.scores[id] = ""; });
   nameEl.value = ""; maxEl.value = "100";
   document.getElementById('form-game').style.display = 'none';
-  renderGameOrder();
-  render();
+  sauvegarder(); renderGameOrder(); render();
 }
-
 function removeGame(gid) {
   games = games.filter(g => g.id !== gid);
   riders.forEach(r => delete r.scores[gid]);
-  renderGameOrder();
-  render();
+  sauvegarder(); renderGameOrder(); render();
 }
 
-// ─── Add/Remove rider ─────────────────────────────────────
+// ─── Motards ──────────────────────────────────────────────
 function addRider() {
   const nameEl = document.getElementById('in-rider-name');
   const bikeEl = document.getElementById('in-rider-bike');
@@ -389,84 +418,74 @@ function addRider() {
   });
   nameEl.value = ""; bikeEl.value = "";
   document.getElementById('form-rider').style.display = 'none';
-  render();
+  sauvegarder(); render();
 }
-
 function removeRider(id) {
   riders = riders.filter(r => r.id !== id);
-  render();
+  sauvegarder(); render();
 }
 
-// ─── Checkpoint : valider un CP valide aussi tous les précédents ──
+// ─── Checkpoints ──────────────────────────────────────────
 function toggleCheckpoint(riderId, ci) {
   const r = riders.find(r => r.id === riderId);
   if (!r) return;
   const wasOn = r.checkpoints[ci];
   if (!wasOn) {
-    // Cocher : valide aussi tous les CPs précédents
     for (let k = 0; k <= ci; k++) r.checkpoints[k] = true;
   } else {
-    // Décocher : décoche ce CP et tous les suivants
     for (let k = ci; k < r.checkpoints.length; k++) r.checkpoints[k] = false;
   }
-  render();
+  sauvegarder(); render();
 }
 
-// ─── Scores ──────────────────────────────────────────────
+// ─── Scores ───────────────────────────────────────────────
 function updateScore(riderId, gid, value) {
   const r = riders.find(r => r.id === riderId);
   const g = games.find(g => g.id === gid);
   if (!r || !g) return;
   r.scores[gid] = value === "" ? "" : Math.min(g.max, Math.max(0, parseInt(value) || 0));
 }
-function updateScoreAndRender(riderId, gid, value) { updateScore(riderId, gid, value); render(); }
+function updateScoreAndRender(riderId, gid, value) { updateScore(riderId, gid, value); sauvegarder(); render(); }
 
 function updateFrEstimate(riderId, value) {
   const r = riders.find(r => r.id === riderId);
-  if (!r) return;
-  r.frEstimate = value;
+  if (r) r.frEstimate = value;
 }
-function updateFrEstimateAndRender(riderId, value) { updateFrEstimate(riderId, value); render(); }
+function updateFrEstimateAndRender(riderId, value) { updateFrEstimate(riderId, value); sauvegarder(); render(); }
 
-// ─── Totaux ──────────────────────────────────────────────
-function getGameTotal(rider) {
-  return games.reduce((s, g) => s + (parseInt(rider.scores[g.id]) || 0), 0);
-}
+// ─── Calculs ──────────────────────────────────────────────
 function getTotal(rider, frScores) {
-  return getGameTotal(rider) + (frScores[rider.id] || 0);
+  const gameTotal = games.reduce((s, g) => s + (parseInt(rider.scores[g.id]) || 0), 0);
+  return gameTotal + (frScores[rider.id] || 0);
 }
 function getProgress(rider) {
   const passed = rider.checkpoints.filter(Boolean).length;
   const total  = checkpoints.length;
   return { passed, total, pct: total ? Math.round(passed / total * 100) : 0 };
 }
-function progColor(pct) {
-  return pct === 100 ? "#00ff88" : pct > 50 ? "#ff9900" : "#cc4400";
-}
+function progColor(pct) { return pct === 100 ? "#00ff88" : pct > 50 ? "#ff9900" : "#cc4400"; }
 function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ─── Render ──────────────────────────────────────────────
+// ─── Render ───────────────────────────────────────────────
 function render() {
   const frScores = computeFrScores();
-  const ref = filRouge.answer !== "" ? parseInt(filRouge.answer) : null;
-
+  const ref = (filRouge.answer !== "" && !isNaN(parseInt(filRouge.answer))) ? parseInt(filRouge.answer) : null;
   const sorted = [...riders].sort((a, b) => getTotal(b, frScores) - getTotal(a, frScores));
   const leaderId = sorted.length > 0 && getTotal(sorted[0], frScores) > 0 ? sorted[0].id : null;
 
   document.getElementById('subtitle').textContent =
     `${riders.length} MOTARDS • ${checkpoints.length} POINTS DE PASSAGE • ${games.length} JEUX`;
 
-  // ── THEAD ──
+  // THEAD
   const theadTr = document.querySelector('#thead-row tr');
   theadTr.innerHTML = '';
   const addTh = (cls, html) => {
     const th = document.createElement('th'); th.className = cls; th.innerHTML = html;
-    theadTr.appendChild(th); return th;
+    theadTr.appendChild(th);
   };
-
-  addTh('th-num',  '#');
+  addTh('th-num', '#');
   addTh('th-name', 'MOTARD');
   checkpoints.forEach((cp, i) =>
     addTh('th-cp', `<div style="font-size:9px;color:#666">CP ${i+1}</div><div style="font-size:10px;color:#ff6b00;font-weight:700">${escHtml(cp)}</div>`)
@@ -476,9 +495,8 @@ function render() {
     addTh('th-game',
       `<div style="font-size:10px;color:#00cc66">${escHtml(g.name)}</div>` +
       `<div style="font-size:9px;color:#555">/ ${g.max} pts</div>` +
-      `<button class="del-game-btn" onclick="removeGame(${g.id})" title="Supprimer">✕</button>`)
+      `<button class="del-game-btn" onclick="removeGame(${g.id})">✕</button>`)
   );
-  // Fil rouge header
   addTh('th-fr',
     `<div style="font-size:10px;color:#aa44ff;font-weight:700">🧵 ${escHtml(filRouge.label)}</div>` +
     `<div style="font-size:9px;color:#555">${ref !== null ? `Réf : ${ref} • Bonus : ${filRouge.points} pts` : 'Réf non fixée'}</div>`
@@ -486,38 +504,30 @@ function render() {
   addTh('th-total', '<div style="font-size:11px;color:#00ff88;font-weight:900">TOTAL</div>');
   addTh('th-del', '');
 
-  // ── TBODY ──
+  // TBODY
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = '';
-
   riders.forEach((rider, rowIdx) => {
-    const prog    = getProgress(rider);
-    const total   = getTotal(rider, frScores);
-    const isLeader= rider.id === leaderId;
-    const pc      = progColor(prog.pct);
-    const frPts   = frScores[rider.id] || 0;
-
+    const prog     = getProgress(rider);
+    const total    = getTotal(rider, frScores);
+    const isLeader = rider.id === leaderId;
+    const pc       = progColor(prog.pct);
+    const frPts    = frScores[rider.id] || 0;
     const tr = document.createElement('tr');
     tr.className = rowIdx % 2 === 0 ? 'row-even' : 'row-odd';
 
-    // # 
     tr.innerHTML += `<td style="text-align:center"><div style="font-weight:900;font-size:16px;color:${isLeader?'#ffd700':'#555'}">${isLeader?'👑':rider.id}</div></td>`;
-    // Nom
     tr.innerHTML += `<td><div style="font-weight:700;font-size:13px">${escHtml(rider.name)}</div><div style="font-size:10px;color:#555">${escHtml(rider.bike)}</div></td>`;
 
-    // Checkpoints
     rider.checkpoints.forEach((checked, ci) => {
       tr.innerHTML += `<td style="text-align:center;background:${checked?'rgba(0,200,80,0.08)':'rgba(200,0,0,0.04)'}">
         <button class="cp-btn ${checked?'cp-on':'cp-off'}" onclick="toggleCheckpoint(${rider.id},${ci})">${checked?'✅':'🔴'}</button></td>`;
     });
 
-    // Avancement
     tr.innerHTML += `<td style="text-align:center;border-left:2px solid #ff6b00">
       <div style="font-size:12px;font-weight:700;color:${pc}">${prog.passed}/${prog.total}</div>
-      <div class="prog-bar-bg"><div class="prog-bar-fg" style="width:${prog.pct}%;background:${pc}"></div></div>
-    </td>`;
+      <div class="prog-bar-bg"><div class="prog-bar-fg" style="width:${prog.pct}%;background:${pc}"></div></div></td>`;
 
-    // Scores jeux
     games.forEach(g => {
       const val = rider.scores[g.id];
       const filled = val !== "" && val !== undefined;
@@ -528,14 +538,12 @@ function render() {
           onchange="updateScoreAndRender(${rider.id},${g.id},this.value)" /></td>`;
     });
 
-    // Fil rouge
     const estVal  = rider.frEstimate;
     const hasDiff = estVal !== "" && ref !== null;
     const diff    = hasDiff ? Math.abs(parseInt(estVal) - ref) : null;
-    let diffLabel = "";
-    if (hasDiff) diffLabel = diff === 0 ? `<span style="color:#00ff88">✓ exact !</span>` : `<span style="color:#888">écart : ${diff}</span>`;
+    const diffLabel = hasDiff ? (diff === 0 ? `<span style="color:#00ff88">✓ exact !</span>` : `<span style="color:#888">écart : ${diff}</span>`) : "";
     tr.innerHTML += `<td style="text-align:center;border-left:2px solid #aa44ff;border-right:2px solid #aa44ff;background:rgba(50,0,80,0.18)">
-      <input type="number" min="0" value="${estVal !== ''?estVal:''}" placeholder="—"
+      <input type="number" min="0" value="${estVal!==''?estVal:''}" placeholder="—"
         class="fr-input"
         oninput="updateFrEstimate(${rider.id},this.value)"
         onchange="updateFrEstimateAndRender(${rider.id},this.value)" />
@@ -543,18 +551,14 @@ function render() {
       ${frPts > 0 ? `<div style="font-size:10px;color:#cc88ff;font-weight:700">+${frPts} pts 🏆</div>` : ''}
     </td>`;
 
-    // Total
     tr.innerHTML += `<td style="text-align:center;background:rgba(0,50,20,0.35)">
       <div style="font-size:18px;font-weight:900;color:${isLeader?'#ffd700':'#00ff88'}">${total}</div>
       <div style="font-size:9px;color:#555">pts</div></td>`;
-
-    // Supprimer
-    tr.innerHTML += `<td style="text-align:center"><button class="del-rider-btn" onclick="removeRider(${rider.id})" title="Supprimer">✕</button></td>`;
-
+    tr.innerHTML += `<td style="text-align:center"><button class="del-rider-btn" onclick="removeRider(${rider.id})">✕</button></td>`;
     tbody.appendChild(tr);
   });
 
-  // ── CLASSEMENT ──
+  // CLASSEMENT
   const medals = ["🥇","🥈","🥉"];
   const rl = document.getElementById('ranking-list');
   rl.innerHTML = '';
@@ -567,68 +571,16 @@ function render() {
     const prog  = getProgress(rider);
     const isTop = i === 0 && total > 0;
     const medal = i < 3 ? medals[i] : `<span style="font-size:12px;color:#444;display:inline-block;min-width:28px;text-align:center">${i+1}</span>`;
-    rl.innerHTML += `
-      <div class="rank-row ${isTop?'leader':''}">
-        <span class="medal">${medal}</span>
-        <div style="flex:1">
-          <div class="rname">${escHtml(rider.name)}</div>
-          <div class="rbike">${escHtml(rider.bike)} · ${prog.passed}/${prog.total} passages</div>
-        </div>
-        <div class="rscore">${total} pts</div>
-      </div>`;
+    rl.innerHTML += `<div class="rank-row ${isTop?'leader':''}">
+      <span class="medal">${medal}</span>
+      <div style="flex:1">
+        <div class="rname">${escHtml(rider.name)}</div>
+        <div class="rbike">${escHtml(rider.bike)} · ${prog.passed}/${prog.total} passages</div>
+      </div>
+      <div class="rscore">${total} pts</div>
+    </div>`;
   });
 }
-
-// Init
-document.getElementById('fr-label').value   = filRouge.label;
-document.getElementById('fr-answer').value  = filRouge.answer;
-document.getElementById('fr-points').value  = filRouge.points;
-render();
-</script>
-<script>
-const firebaseConfig = {
-  apiKey: "AIzaSyAPtwWPnEPe-45NJ9FOtd4RUEaMYdEYOtQ",
-  authDomain: "rallye-moto-app.firebaseapp.com",
-  databaseURL: "https://rallye-moto-app-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "rallye-moto-app",
-  storageBucket: "rallye-moto-app.firebasestorage.app",
-  messagingSenderId: "825683822459",
-  appId: "1:825683822459:web:1004377bf66649a0ed1fde"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const dbRef = db.ref("rallye");
-
-let estEnTrainDeSauvegarder = false;
-let derniereModifLocale = 0;
-
-const _render = render;
-render = function() {
-  _render();
-  estEnTrainDeSauvegarder = true;
-  derniereModifLocale = Date.now();
-  dbRef.set({ riders, games, checkpoints, filRouge }).then(() => {
-    estEnTrainDeSauvegarder = false;
-  });
-};
-
-dbRef.on("value", snap => {
-  const data = snap.val();
-  if (!data) return;
-  // Ignore les mises à jour Firebase pendant 1 seconde après une modif locale
-  if (Date.now() - derniereModifLocale < 1000) return;
-  riders      = data.riders      ?? riders;
-  games       = data.games       ?? games;
-  checkpoints = data.checkpoints ?? checkpoints;
-  filRouge    = data.filRouge    ?? filRouge;
-  nextRiderId = Math.max(nextRiderId, ...riders.map(r => r.id + 1));
-  nextGameId  = Math.max(nextGameId,  ...games.map(g => g.id + 1));
-  _render();
-  document.getElementById('fr-label').value  = filRouge.label;
-  document.getElementById('fr-answer').value = filRouge.answer;
-  document.getElementById('fr-points').value = filRouge.points;
-});
 </script>
 </body>
 </html>
