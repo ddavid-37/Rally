@@ -586,44 +586,48 @@ document.getElementById('fr-points').value  = filRouge.points;
 render();
 </script>
 <script>
-  const firebaseConfig = {
-
-    apiKey: "AIzaSyAPtwWPnEPe-45NJ9FOtd4RUEaMYdEYOtQ",
-
-    authDomain: "rallye-moto-app.firebaseapp.com",
-
-    databaseURL: "https://rallye-moto-app-default-rtdb.europe-west1.firebasedatabase.app",
-
-    projectId: "rallye-moto-app",
-
-    storageBucket: "rallye-moto-app.firebasestorage.app",
-
-    messagingSenderId: "825683822459",
-
-    appId: "1:825683822459:web:1004377bf66649a0ed1fde"
-
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyAPtwWPnEPe-45NJ9FOtd4RUEaMYdEYOtQ",
+  authDomain: "rallye-moto-app.firebaseapp.com",
+  databaseURL: "https://rallye-moto-app-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "rallye-moto-app",
+  storageBucket: "rallye-moto-app.firebasestorage.app",
+  messagingSenderId: "825683822459",
+  appId: "1:825683822459:web:1004377bf66649a0ed1fde"
+};
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-const ref = db.ref("rallye");
+const dbRef = db.ref("rallye");
 
-// Sauvegarde dans Firebase à chaque render
+let estEnTrainDeSauvegarder = false;
+let derniereModifLocale = 0;
+
 const _render = render;
 render = function() {
   _render();
-  ref.set({ riders, games, checkpoints, filRouge });
+  estEnTrainDeSauvegarder = true;
+  derniereModifLocale = Date.now();
+  dbRef.set({ riders, games, checkpoints, filRouge }).then(() => {
+    estEnTrainDeSauvegarder = false;
+  });
 };
 
-// Écoute les changements en temps réel
-ref.on("value", snap => {
+dbRef.on("value", snap => {
   const data = snap.val();
   if (!data) return;
+  // Ignore les mises à jour Firebase pendant 1 seconde après une modif locale
+  if (Date.now() - derniereModifLocale < 1000) return;
   riders      = data.riders      ?? riders;
   games       = data.games       ?? games;
   checkpoints = data.checkpoints ?? checkpoints;
   filRouge    = data.filRouge    ?? filRouge;
+  nextRiderId = Math.max(nextRiderId, ...riders.map(r => r.id + 1));
+  nextGameId  = Math.max(nextGameId,  ...games.map(g => g.id + 1));
   _render();
+  document.getElementById('fr-label').value  = filRouge.label;
+  document.getElementById('fr-answer').value = filRouge.answer;
+  document.getElementById('fr-points').value = filRouge.points;
 });
 </script>
 </body>
